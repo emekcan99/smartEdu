@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
+import slugify from "slugify";
 
 const CourseSchema = new Schema({
   name: {
@@ -16,7 +17,22 @@ const CourseSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  slug: {
+    type: String,
+    unique: true,
+  },
+  category:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'Category'
+  }
 });
 
+CourseSchema.pre("validate", function (next) {
+  this.slug = slugify(this.name, {
+    lower: true,
+    strict: true,
+  });
+  next();
+});
 
-export const Course = mongoose.model('Course', CourseSchema)
+export const Course = mongoose.model("Course", CourseSchema);
