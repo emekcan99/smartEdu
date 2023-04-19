@@ -6,6 +6,9 @@ import { categoryRoute } from "./routes/categoryRoute.mjs";
 import { userRoute } from "./routes/userRoute.mjs";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import flash from "connect-flash";
+import methodOverride from "method-override";
+
 const app = express();
 
 const port = 3000;
@@ -32,7 +35,17 @@ app.use(
     secret: "my_keyboard_cat",
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({mongoUrl: 'mongodb://localhost/smartedu-db'})
+    store: MongoStore.create({ mongoUrl: "mongodb://localhost/smartedu-db" }),
+  })
+);
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.flashMessages = req.flash();
+  next();
+});
+app.use(
+  methodOverride("_method", {
+    methods: ["POST", "GET"],
   })
 );
 
